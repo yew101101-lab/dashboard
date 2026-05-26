@@ -1,0 +1,273 @@
+/* App Container Layout */
+.app-container {
+  width: 100%;
+  max-width: 1100px; /* 위젯 수 증가에 맞춰 대시보드 너비를 적절히 확장 */
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100svh;
+}
+
+/* Header Section */
+.app-header {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: slideDown 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes slideDown {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.header-greeting {
+  font-family: var(--font-title);
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--color-cyan);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin-bottom: 8px;
+}
+
+.header-title {
+  font-family: var(--font-title);
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: -1.5px;
+  margin-bottom: 12px;
+  background: linear-gradient(135deg, #ffffff 30%, rgba(255, 255, 255, 0.5) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.header-subtitle {
+  font-size: 16px;
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+/* --- Responsive Dashboard Grid System --- */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  width: 100%;
+  animation: fadeInGrid 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes fadeInGrid {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.widget-wrapper {
+  display: flex;
+  width: 100%;
+}
+
+/* --- Grid Spans for Balance --- */
+.date-area {
+  grid-column: span 2; /* 날짜 정보 카드는 넓은 가로폭 제공 */
+}
+
+.today-todo-area {
+  grid-row: span 2; /* 오늘 할 일 목록은 세로로 길게 배치 */
+}
+
+.monitor-area {
+  grid-column: span 2; /* 데스크탑/태블릿에서 빈자리를 메우기 위해 2칸 제공 */
+}
+
+
+/* --- Desktop Bonus Widget: System Monitor Styles --- */
+.desktop-monitor-card {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  min-height: 230px;
+  height: 100%;
+}
+
+.monitor-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.monitor-header-icon {
+  color: var(--color-cyan);
+  filter: drop-shadow(0 0 8px rgba(50, 179, 237, 0.4));
+}
+
+.monitor-header-title {
+  font-family: var(--font-title);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+.monitor-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  flex-grow: 1;
+  justify-content: space-between;
+}
+
+.monitor-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.monitor-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.monitor-label {
+  color: var(--text-secondary);
+}
+
+.monitor-value {
+  color: #ffffff;
+}
+
+.monitor-bar-bg {
+  width: 100%;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.monitor-bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease-in-out;
+}
+
+.monitor-bar-fill.fill-cpu {
+  background: linear-gradient(90deg, var(--color-cyan) 0%, #38bdf8 100%);
+}
+
+.monitor-bar-fill.fill-ram {
+  background: linear-gradient(90deg, #a78bfa 0%, #818cf8 100%);
+}
+
+.monitor-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+
+.status-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-indicator.online {
+  background: #22c55e;
+  box-shadow: 0 0 8px #22c55e;
+  animation: pulseStatus 2s infinite;
+}
+
+@keyframes pulseStatus {
+  0% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.5; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.status-icon {
+  color: var(--text-muted);
+}
+
+.status-text {
+  font-size: 11px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* Footer Section */
+.app-footer {
+  text-align: center;
+  margin-top: auto;
+  padding-top: 48px;
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+/* ==========================================
+   Responsive Breakpoints
+   ========================================== */
+
+/* 1. Tablet View (601px ~ 1024px) */
+@media (max-width: 1024px) {
+  .app-container {
+    padding: 32px 20px;
+  }
+  
+  .header-title {
+    font-size: 34px;
+  }
+  
+  .dashboard-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+
+  .date-area {
+    grid-column: span 2; /* 태블릿 2열 구조에서도 2칸을 꽉 채우도록 함 */
+  }
+
+  .today-todo-area {
+    grid-column: span 1;
+    grid-row: span 1; /* 높이 밸런스 조정 */
+  }
+}
+
+/* 2. Mobile View (≤ 600px - 모바일은 엇갈림 없는 정직한 100% 가로폭 세로정렬) */
+@media (max-width: 600px) {
+  .app-container {
+    padding: 24px 16px;
+  }
+
+  .header-title {
+    font-size: 28px;
+    letter-spacing: -1px;
+  }
+
+  .header-subtitle {
+    font-size: 14px;
+  }
+
+  /* 데스크탑/태블릿용 보너스 모니터 위젯 숨김 */
+  .desktop-widget {
+    display: none !important;
+  }
+
+  /* 모든 카드를 100% 크기로 중앙 세로 스택 */
+  .dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 10px 0;
+  }
+
+  .widget-wrapper {
+    width: 100% !important;
+    align-self: center !important;
+    margin: 0 !important;
+  }
+}
