@@ -89,11 +89,11 @@
   min-height: auto !important;
   width: auto !important;
   border-radius: 14px !important;
-  background: rgba(255, 255, 255, 0.05) !important; /* 각 버튼마다 독립적인 반투명 배경 */
-  border: 1px solid rgba(255, 255, 255, 0.12) !important; /* 각 버튼마다 독립적인 테두리 */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
-  backdrop-filter: blur(20px) !important;
-  -webkit-backdrop-filter: blur(20px) !important;
+  background: #181922 !important; /* 솔리드 다크 칩 배경 */
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
   flex-direction: row !important;
   align-items: center !important;
   gap: 8px !important;
@@ -102,9 +102,9 @@
 }
 
 .app-top-bar .widget-card:hover {
-  background: rgba(255, 255, 255, 0.08) !important;
-  border-color: rgba(255, 255, 255, 0.25) !important;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  background: #1f212d !important;
+  border-color: rgba(0, 242, 254, 0.3) !important; /* 네온 시안 보더 */
+  box-shadow: 0 0 12px rgba(0, 242, 254, 0.25) !important; /* 네온 시안 글로우 */
   transform: translateY(-2px) !important;
 }
 
@@ -545,20 +545,20 @@
     min-height: auto !important;
     width: auto !important;
     border-radius: 12px !important;
-    background: rgba(255, 255, 255, 0.05) !important;
-    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: #181922 !important;
+    border: 1px solid rgba(255, 255, 255, 0.06) !important;
     flex-direction: row !important;
     align-items: center !important;
     gap: 6px !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
     transform: none !important;
   }
 
   .app-top-bar .widget-card:hover {
     transform: none !important;
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: #1f212d !important;
   }
 
   .app-top-bar .widget-header {

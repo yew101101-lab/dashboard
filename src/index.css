@@ -3,23 +3,21 @@
   --font-title: 'Outfit', 'Inter', -apple-system, sans-serif;
   --font-body: 'Inter', -apple-system, sans-serif;
 
-  /* Glassmorphism Variables */
-  --glass-bg: rgba(255, 255, 255, 0.08);
-  --glass-border: rgba(255, 255, 255, 0.2);
-  --glass-border-hover: rgba(255, 255, 255, 0.4);
-  --glass-blur: 25px;
-  --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.15);
-  --glass-shadow-hover: 0 12px 40px 0 rgba(0, 0, 0, 0.25);
+  /* Sleek Neon Dark Theme Variables */
+  --card-bg: #11121b; /* 매끄러운 솔리드 다크 백그라운드 */
+  --card-border: rgba(255, 255, 255, 0.05); /* 극도로 얇은 다크 보더 */
+  --card-border-hover: rgba(255, 255, 255, 0.12);
+  --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
   
-  /* Palette & Accent colors */
-  --color-cyan: rgb(50, 179, 237);
-  --color-pink: rgb(248, 60, 160);
-  --color-yellow: rgb(255, 235, 11);
-  --color-blue: #0284c7;
-  --color-red: #ef4444;
+  /* Neon Glow Accent Colors */
+  --color-cyan: rgb(0, 242, 254); /* 극단적 네온 시안 */
+  --color-pink: rgb(253, 56, 163); /* 극단적 네온 핑크 */
+  --color-yellow: rgb(255, 222, 3); /* 극단적 네온 옐로 */
+  --color-blue: #0072ff;
+  --color-red: #ff3b30;
   --text-primary: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
-  --text-muted: rgba(255, 255, 255, 0.5);
+  --text-muted: rgba(255, 255, 255, 0.45);
 }
 
 * {
@@ -131,19 +129,18 @@ body {
   }
 }
 
-/* --- Glassmorphism Base Styles --- */
+/* --- Neon Dark Theme Base Styles --- */
 .glass-effect {
-  background: var(--glass-bg);
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
-  border: 1px solid var(--glass-border);
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 24px;
-  box-shadow: var(--glass-shadow);
+  box-shadow: var(--card-shadow);
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 .glass-effect:hover {
-  border-color: var(--glass-border-hover);
-  box-shadow: var(--glass-shadow-hover);
+  border-color: var(--card-border-hover);
+  /* 호버 시 은은한 오로라 네온 발광 백섀도우 제공 */
+  box-shadow: 0 16px 40px rgba(0, 242, 254, 0.08), 0 1px 2px rgba(253, 56, 163, 0.05);
   transform: translateY(-4px);
 }

@@ -97,7 +97,7 @@ function LoginScreen({ onLogin }) {
           </div>
         </div>
 
-        <h2 className="login-title">Glassmorphism Dashboard</h2>
+        <h2 className="login-title">라이프 대시보드</h2>
         <p className="login-subtitle">이름을 입력하고 대시보드를 시작해 보세요.</p>
         <form onSubmit={handleSubmit} className="login-form">
           <div className="login-input-wrapper">
@@ -563,13 +563,7 @@ function App() {
     loadLiveLocationAndWeather(apiKey);
   }, [apiKey]);
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour >= 5 && hour < 12) return '좋은 아침입니다! ☀️';
-    if (hour >= 12 && hour < 18) return '즐거운 오후 보내세요! ☕';
-    if (hour >= 18 && hour < 22) return '오늘 하루 수고 많으셨습니다! 🌙';
-    return '평온한 밤 되세요. 💤';
-  };
+
 
   if (!isLoggedIn) {
     return <LoginScreen onLogin={handleLogin} />;
@@ -605,8 +599,8 @@ function App() {
         </div>
 
         <header className="app-header">
-          <div className="header-greeting">{getGreeting()}</div>
-          <h1 className="header-title">Glassmorphism Dashboard</h1>
+          <div className="header-greeting">좋은 아침입니다 ☀️</div>
+          <h1 className="header-title">라이프 대시보드</h1>
           <p className="header-subtitle">
             각각의 위젯 카드가 직관적인 세로 정렬 구조로 배치된 반응형 대시보드
           </p>
