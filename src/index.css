@@ -104,6 +104,18 @@ body {
   opacity: 0.25;
 }
 
+.blob-purple {
+  background: radial-gradient(circle, #a78bfa 0%, rgba(167, 139, 250, 0) 70%);
+  width: 75vw;
+  height: 75vw;
+  max-width: 650px;
+  max-height: 650px;
+  bottom: 30vh;
+  left: -5vw;
+  animation-duration: 22s;
+  opacity: 0.2;
+}
+
 @keyframes drift {
   0% {
     transform: translate(0, 0) rotate(0deg) scale(1);

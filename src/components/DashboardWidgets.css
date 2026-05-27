@@ -919,79 +919,146 @@
   align-items: center;
   z-index: 9999;
   background: #06050b;
+  overflow: hidden;
 }
 
 .login-card {
   width: 90%;
-  max-width: 420px;
-  padding: 40px 32px;
+  max-width: 440px;
+  padding: 48px 40px;
   text-align: center;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
-  border-radius: 24px;
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.5), 
+              inset 0 1px 1px rgba(255, 255, 255, 0.1);
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  animation: cardEntrance 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes cardEntrance {
+  from { opacity: 0; transform: translateY(30px) scale(0.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.login-logo-box {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.login-logo-icon {
+  width: 60px;
+  height: 60px;
+  border-radius: 20px;
+  background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(2, 132, 199, 0.2) 100%);
+  border: 1px solid rgba(56, 189, 248, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-cyan);
+  box-shadow: 0 8px 24px rgba(50, 179, 237, 0.2);
+  animation: logoFloat 4s ease-in-out infinite;
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
 .login-title {
   font-family: var(--font-title);
-  font-size: 26px;
+  font-size: 28px;
   font-weight: 800;
-  margin-bottom: 8px;
-  background: linear-gradient(135deg, #ffffff 30%, rgba(255, 255, 255, 0.6) 100%);
+  margin-bottom: 10px;
+  background: linear-gradient(135deg, #ffffff 40%, rgba(255, 255, 255, 0.6) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.8px;
 }
 
 .login-subtitle {
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--text-secondary);
-  margin-bottom: 28px;
+  margin-bottom: 36px;
+  line-height: 1.5;
 }
 
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 20px;
   width: 100%;
+}
+
+.login-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.login-input-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-muted);
+  pointer-events: none;
+  transition: color 0.3s ease;
 }
 
 .login-input {
   width: 100%;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.12);
-  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
   color: #ffffff;
-  padding: 12px 16px;
-  font-size: 14px;
+  padding: 14px 16px 14px 48px;
+  font-size: 14.5px;
   font-weight: 500;
   outline: none;
   transition: all 0.3s ease;
   box-sizing: border-box;
 }
 
+.login-input-wrapper:focus-within .login-input-icon {
+  color: var(--color-cyan);
+}
+
 .login-input:focus {
-  border-color: #38bdf8;
+  border-color: var(--color-cyan);
   background: rgba(255, 255, 255, 0.08);
-  box-shadow: 0 0 10px rgba(56, 189, 248, 0.2);
+  box-shadow: 0 0 15px rgba(56, 189, 248, 0.15);
 }
 
 .login-submit-btn {
   width: 100%;
-  padding: 12px;
+  padding: 14px;
   background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
   color: #ffffff;
   border: none;
-  border-radius: 12px;
+  border-radius: 14px;
   font-weight: 700;
-  font-size: 14.5px;
+  font-size: 15px;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(2, 132, 199, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  box-shadow: 0 8px 20px rgba(2, 132, 199, 0.25);
 }
 
 .login-submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(2, 132, 199, 0.5);
+  box-shadow: 0 12px 25px rgba(2, 132, 199, 0.4);
   background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+}
+
+.btn-arrow-icon {
+  transition: transform 0.3s ease;
+}
+
+.login-submit-btn:hover .btn-arrow-icon {
+  transform: translateX(4px);
 }
 
 .login-submit-btn:active {
@@ -1002,7 +1069,30 @@
    [NEW] D-Day Planner Widget Styles
    ========================================== */
 .dday-widget {
-  min-height: 240px;
+  min-height: 220px;
+  position: relative;
+}
+
+.dday-add-shortcut-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.dday-add-shortcut-btn:hover {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.3);
+  transform: scale(1.1);
 }
 
 .dday-widget-body {
@@ -1073,120 +1163,196 @@
   background: rgba(255, 255, 255, 0.15);
 }
 
-.dday-list-container {
+.dday-slider-container {
   width: 100%;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  flex-grow: 1;
   justify-content: space-between;
+  flex-grow: 1;
+  position: relative;
 }
 
-.dday-list {
-  list-style: none;
+.dday-slider-wrapper {
+  position: relative;
+  width: 100%;
+  min-height: 90px;
   display: flex;
-  flex-direction: column;
-  gap: 8px;
-  max-height: 140px;
-  overflow-y: auto;
-  padding-right: 2px;
+  align-items: center;
 }
 
-.dday-list::-webkit-scrollbar {
-  width: 4px;
-}
-.dday-list::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
+.dday-slider-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 14px;
+  width: 100%;
+  position: relative;
+  z-index: 15;
 }
 
-.dday-item {
+.slider-control-btn {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  color: var(--text-muted);
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.slider-control-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  border-color: #10b981;
+  color: #ffffff;
+  transform: scale(1.08);
+}
+
+.slider-control-btn:active {
+  transform: scale(0.95);
+}
+
+.dday-slide-item {
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 10px;
+  padding: 14px 18px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 10px;
-  transition: all 0.2s ease;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  min-height: 80px;
+  box-sizing: border-box;
 }
 
-.dday-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+.dday-slide-item:hover {
+  background: rgba(255, 255, 255, 0.05);
   border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
 }
 
-.dday-info {
+.slide-animating-prev {
+  animation: slideFromLeft 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.slide-animating-next {
+  animation: slideFromRight 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+@keyframes slideFromLeft {
+  from { opacity: 0; transform: translateX(-15px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes slideFromRight {
+  from { opacity: 0; transform: translateX(15px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+.dday-slide-content {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 16px;
   flex-grow: 1;
+  overflow: hidden;
 }
 
-.dday-badge-text {
+.dday-badge-large {
   font-family: var(--font-title);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 800;
-  color: #34d399;
-  background: rgba(16, 185, 129, 0.1);
-  padding: 2px 8px;
-  border-radius: 6px;
-  border: 1px solid rgba(16, 185, 129, 0.2);
-  min-width: 50px;
+  background: linear-gradient(135deg, #34d399 0%, #10b981 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 8px rgba(16, 185, 129, 0.25));
+  background-color: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  padding: 6px 12px;
+  border-radius: 10px;
+  min-width: 60px;
   text-align: center;
+  flex-shrink: 0;
+  display: inline-block;
 }
 
-.dday-detail {
+.dday-slide-details {
   display: flex;
   flex-direction: column;
   text-align: left;
+  overflow: hidden;
 }
 
-.dday-item-title {
-  font-size: 12.5px;
+.dday-slide-title {
+  font-size: 13.5px;
   font-weight: 700;
   color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
-.dday-item-date {
-  font-size: 10px;
+.dday-slide-date {
+  font-size: 11px;
   color: var(--text-muted);
+  margin-top: 2px;
 }
 
-.dday-delete-btn {
+.dday-slide-delete-btn {
   background: none;
   border: none;
   color: var(--text-muted);
   cursor: pointer;
-  opacity: 0;
+  opacity: 0.3;
   transition: all 0.2s ease;
   display: flex;
   align-items: center;
+  padding: 8px;
+  border-radius: 6px;
+  flex-shrink: 0;
 }
 
-.dday-item:hover .dday-delete-btn {
-  opacity: 1;
+.dday-slide-item:hover .dday-slide-delete-btn {
+  opacity: 0.8;
 }
 
-.dday-delete-btn:hover {
-  color: var(--color-red);
+.dday-slide-delete-btn:hover {
+  color: var(--color-red) !important;
+  background: rgba(239, 68, 68, 0.1);
+  opacity: 1 !important;
+}
+
+.dday-empty-slider {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 24px 0;
+  flex-grow: 1;
 }
 
 .dday-empty-msg {
-  font-size: 12px;
+  font-size: 12.5px;
   color: var(--text-muted);
   text-align: center;
-  padding: 20px 0;
 }
 
 .btn-dday-add-trigger {
-  width: 100%;
-  padding: 8px;
+  padding: 8px 16px;
   background: rgba(255, 255, 255, 0.04);
   border: 1px dashed rgba(255, 255, 255, 0.15);
   border-radius: 10px;
   color: var(--text-secondary);
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 700;
   cursor: pointer;
   display: flex;
@@ -1200,6 +1366,38 @@
   background: rgba(255, 255, 255, 0.08);
   border-color: #10b981;
   color: #ffffff;
+}
+
+.dday-indicators {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 6px;
+  margin-top: 14px;
+  position: relative;
+  z-index: 15;
+}
+
+.indicator-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 6px solid transparent;
+  background-clip: padding-box;
+}
+
+.indicator-dot:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.indicator-dot.active {
+  width: 16px;
+  border-radius: 3px;
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16, 185, 129, 0.5);
 }
 
 /* ==========================================

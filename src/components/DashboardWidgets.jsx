@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { CloudSun, Calendar, MapPin, User, LogOut, Check, PiggyBank, Target, Flame, Smile, Compass, Plus, Trash2, CheckSquare, Quote, Play, Pause, RotateCcw, RefreshCw } from 'lucide-react';
+import { CloudSun, Calendar, MapPin, User, LogOut, Check, PiggyBank, Target, Flame, Smile, Compass, Plus, Trash2, CheckSquare, Quote, Play, Pause, RotateCcw, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import GlassCard from './GlassCard';
 import './DashboardWidgets.css';
 
@@ -218,32 +218,109 @@ export function LogoutWidget({ onLogout }) {
 // A. 디데이 플래너 위젯 (최대 3개 등록 가능, LocalStorage 연동)
 export function DDayWidget() {
   const [ddays, setDdays] = useState(() => {
-    const saved = localStorage.getItem('dashboard_ddays');
-    return saved ? JSON.parse(saved) : [
-      { id: 1, title: '내 집 마련 목표', date: '2026-12-31' }
+    try {
+      const saved = localStorage.getItem('dashboard_ddays');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const isValid = parsed.every(item => item && typeof item === 'object' && 'id' in item && 'title' in item && 'date' in item);
+          if (isValid) return parsed;
+        }
+      }
+    } catch (e) {
+      console.error('LocalStorage dashboard_ddays parsing error, falling back to default:', e);
+    }
+    return [
+      { id: 1, title: '저축 목표 달성 기한', date: '2026-12-31' },
+      { id: 2, title: '포트폴리오 완성 기한', date: '2026-08-31' },
+      { id: 3, title: '자격증 취득 목표일', date: '2026-10-31' }
     ];
   });
   
   const [titleInput, setTitleInput] = useState('');
   const [dateInput, setDateInput] = useState('');
   const [isAdding, setIsAdding] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [slideDirection, setSlideDirection] = useState('');
+  const [animating, setAnimating] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     localStorage.setItem('dashboard_ddays', JSON.stringify(ddays));
-  }, [ddays]);
+    if (currentIndex >= ddays.length) {
+      setCurrentIndex(Math.max(0, ddays.length - 1));
+    }
+  }, [ddays, currentIndex]);
+
+  // 4초마다 자동 슬라이드 (Auto-play, 마우스 호버 시 일시정지)
+  useEffect(() => {
+    if (ddays.length <= 1 || isAdding || isHovered) return;
+
+    const interval = setInterval(() => {
+      if (animating) return;
+      setSlideDirection('next');
+      setAnimating(true);
+      setCurrentIndex((prev) => {
+        const nextIdx = prev === ddays.length - 1 ? 0 : prev + 1;
+        return nextIdx >= ddays.length ? 0 : nextIdx;
+      });
+      setTimeout(() => setAnimating(false), 300);
+    }, 4000);
+
+    return () => clearInterval(interval);
+  }, [ddays, currentIndex, isAdding, isHovered, animating]);
 
   const calculateDDay = (dateStr) => {
-    if (!dateStr) return 'D-?';
-    const target = new Date(dateStr);
-    const today = new Date();
-    target.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
+    try {
+      if (!dateStr) return 'D-?';
+      const target = new Date(dateStr);
+      if (isNaN(target.getTime())) return 'D-?';
 
-    const diffTime = target.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    
-    if (diffDays === 0) return 'D-Day';
-    return diffDays > 0 ? `D-${diffDays}` : `D+${Math.abs(diffDays)}`;
+      const today = new Date();
+      target.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0);
+
+      const diffTime = target.getTime() - today.getTime();
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays === 0) return 'D-Day';
+      return diffDays > 0 ? `D-${diffDays}` : `D+${Math.abs(diffDays)}`;
+    } catch (err) {
+      return 'D-?';
+    }
+  };
+
+  const handlePrev = (e) => {
+    if (e) e.stopPropagation();
+    if (animating || ddays.length <= 1) return;
+    setSlideDirection('prev');
+    setAnimating(true);
+    setCurrentIndex((prev) => {
+      const nextIdx = prev === 0 ? ddays.length - 1 : prev - 1;
+      return nextIdx >= ddays.length ? 0 : nextIdx;
+    });
+    setTimeout(() => setAnimating(false), 300);
+  };
+
+  const handleNext = (e) => {
+    if (e) e.stopPropagation();
+    if (animating || ddays.length <= 1) return;
+    setSlideDirection('next');
+    setAnimating(true);
+    setCurrentIndex((prev) => {
+      const nextIdx = prev === ddays.length - 1 ? 0 : prev + 1;
+      return nextIdx >= ddays.length ? 0 : nextIdx;
+    });
+    setTimeout(() => setAnimating(false), 300);
+  };
+
+  const handleDotClick = (idx, e) => {
+    if (e) e.stopPropagation();
+    if (idx === currentIndex || animating) return;
+    setSlideDirection(idx > currentIndex ? 'next' : 'prev');
+    setAnimating(true);
+    setCurrentIndex(idx);
+    setTimeout(() => setAnimating(false), 300);
   };
 
   const handleAddDDay = (e) => {
@@ -260,24 +337,42 @@ export function DDayWidget() {
       date: dateInput
     };
     
-    setDdays([...ddays, newDDay]);
+    const updated = [...ddays, newDDay];
+    setDdays(updated);
     setTitleInput('');
     setDateInput('');
     setIsAdding(false);
+    setCurrentIndex(updated.length - 1);
   };
 
   const handleDeleteDDay = (id, e) => {
     e.stopPropagation();
-    setDdays(ddays.filter(item => item.id !== id));
+    const filtered = ddays.filter(item => item.id !== id);
+    setDdays(filtered);
+    
+    setCurrentIndex((prev) => {
+      if (filtered.length === 0) return 0;
+      if (prev >= filtered.length) return filtered.length - 1;
+      return prev;
+    });
   };
 
   return (
-    <GlassCard className="widget-card dday-widget">
+    <GlassCard 
+      className="widget-card dday-widget"
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
       <div className="widget-header">
         <div className="widget-icon-box" style={{ '--icon-color': '#10b981' }}>
           <PiggyBank size={20} />
         </div>
-        <span className="widget-title">디데이 플래너 ({ddays.length}/3)</span>
+        <span className="widget-title">디데이 스케줄러 ({ddays.length}/3)</span>
+        {!isAdding && ddays.length < 3 && (
+          <button className="dday-add-shortcut-btn" onClick={(e) => { e.stopPropagation(); setIsAdding(true); }} title="D-Day 추가">
+            <Plus size={14} />
+          </button>
+        )}
       </div>
 
       <div className="dday-widget-body">
@@ -310,30 +405,61 @@ export function DDayWidget() {
             </div>
           </form>
         ) : (
-          <div className="dday-list-container">
-            <ul className="dday-list">
-              {ddays.map(item => (
-                <li key={item.id} className="dday-item">
-                  <div className="dday-info">
-                    <span className="dday-badge-text">{calculateDDay(item.date)}</span>
-                    <div className="dday-detail">
-                      <span className="dday-item-title">{item.title}</span>
-                      <span className="dday-item-date">{item.date}</span>
-                    </div>
+          <div className="dday-slider-container">
+            {ddays.length > 0 ? (
+              <>
+                <div className="dday-slider-wrapper">
+                  <div className={`dday-slide-item ${animating ? `slide-animating-${slideDirection}` : ''}`}>
+                    {ddays[currentIndex] && (
+                      <div className="dday-slide-content">
+                        <span className="dday-badge-large">{calculateDDay(ddays[currentIndex].date)}</span>
+                        <div className="dday-slide-details">
+                          <span className="dday-slide-title">{ddays[currentIndex].title}</span>
+                          <span className="dday-slide-date">{ddays[currentIndex].date}</span>
+                        </div>
+                      </div>
+                    )}
+                    
+                    {ddays[currentIndex] && (
+                      <button className="dday-slide-delete-btn" onClick={(e) => handleDeleteDDay(ddays[currentIndex].id, e)} title="D-Day 삭제">
+                        <Trash2 size={13} />
+                      </button>
+                    )}
                   </div>
-                  <button className="dday-delete-btn" onClick={(e) => handleDeleteDDay(item.id, e)}>
-                    <Trash2 size={13} />
-                  </button>
-                </li>
-              ))}
-              {ddays.length === 0 && (
-                <li className="dday-empty-msg">등록된 디데이가 없습니다.</li>
-              )}
-            </ul>
-            {ddays.length < 3 && (
-              <button className="btn-dday-add-trigger" onClick={() => setIsAdding(true)}>
-                <Plus size={13} /> D-Day 추가하기
-              </button>
+                </div>
+
+                <div className="dday-slider-controls">
+                  {ddays.length > 1 && (
+                    <button className="slider-control-btn prev-btn" onClick={handlePrev} title="이전 목표">
+                      <ChevronLeft size={14} />
+                    </button>
+                  )}
+                  
+                  <div className="dday-indicators">
+                    {ddays.map((item, idx) => (
+                      <span 
+                        key={item.id} 
+                        className={`indicator-dot ${idx === currentIndex ? 'active' : ''}`}
+                        onClick={(e) => handleDotClick(idx, e)}
+                        title={`${idx + 1}번째 목표로 이동`}
+                      />
+                    ))}
+                  </div>
+
+                  {ddays.length > 1 && (
+                    <button className="slider-control-btn next-btn" onClick={handleNext} title="다음 목표">
+                      <ChevronRight size={14} />
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : (
+              <div className="dday-empty-slider">
+                <p className="dday-empty-msg">등록된 디데이가 없습니다.</p>
+                <button className="btn-dday-add-trigger" onClick={() => setIsAdding(true)}>
+                  <Plus size={13} /> D-Day 추가하기
+                </button>
+              </div>
             )}
           </div>
         )}
@@ -410,8 +536,10 @@ export function TodayFocusWidget({ onFocusSubmit, geminiLoading }) {
 }
 
 // C. 오늘의 기분 위젯
-export function MoodWidget() {
-  const [activeMood, setActiveMood] = useState(null); // 'calm', 'joy', 'flow'
+export function MoodWidget({ onMoodSelect, moodLoading }) {
+  const [activeMood, setActiveMood] = useState(() => {
+    return localStorage.getItem('dashboard_active_mood') || null;
+  }); // 'calm', 'joy', 'flow'
 
   const moods = [
     { key: 'calm', label: '평온', icon: Compass, color: '#34d399', desc: '차분하게 중심을 잡은 상태 🧘‍♂️' },
@@ -419,9 +547,14 @@ export function MoodWidget() {
     { key: 'flow', label: '몰입', icon: Flame, color: '#f87171', desc: '시간 가는 줄 모르고 집중하는 상태 🔥' }
   ];
 
-  const handleMoodSelect = (key, e) => {
+  const handleMoodSelect = async (mood, e) => {
     e.stopPropagation();
-    setActiveMood(key);
+    setActiveMood(mood.key);
+    localStorage.setItem('dashboard_active_mood', mood.key);
+    
+    if (onMoodSelect) {
+      await onMoodSelect(mood.label);
+    }
   };
 
   const activeMoodInfo = moods.find(m => m.key === activeMood);
@@ -433,7 +566,7 @@ export function MoodWidget() {
     >
       <div className="widget-header">
         <div className="widget-icon-box" style={{ '--icon-color': activeMoodInfo ? activeMoodInfo.color : '#e2e8f0' }}>
-          {activeMoodInfo ? <activeMoodInfo.icon size={20} className="animated-icon" /> : <Smile size={20} />}
+          {activeMoodInfo ? <activeMoodInfo.icon size={20} className={moodLoading ? "animated-icon spinning" : "animated-icon"} /> : <Smile size={20} />}
         </div>
         <span className="widget-title">오늘의 기분</span>
       </div>
@@ -444,9 +577,10 @@ export function MoodWidget() {
           return (
             <button
               key={mood.key}
-              onClick={(e) => handleMoodSelect(mood.key, e)}
+              onClick={(e) => handleMoodSelect(mood, e)}
               className={`btn-mood-select ${activeMood === mood.key ? 'active' : ''}`}
               style={{ '--mood-color': mood.color }}
+              disabled={moodLoading}
             >
               <MoodIcon size={14} />
               <span>{mood.label}</span>
@@ -455,7 +589,7 @@ export function MoodWidget() {
         })}
       </div>
       <p className="widget-subtext">
-        {activeMoodInfo ? activeMoodInfo.desc : "지금 내 감정 상태는 어떠한가요?"}
+        {moodLoading ? "🤖 AI가 기분에 어울리는 배경 컬러 그라디언트를 생성 중..." : (activeMoodInfo ? activeMoodInfo.desc : "지금 내 감정 상태는 어떠한가요?")}
       </p>
     </GlassCard>
   );

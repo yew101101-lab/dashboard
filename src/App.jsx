@@ -13,7 +13,7 @@ import {
   MoodWidget,
   TodayTodoWidget
 } from './components/DashboardWidgets';
-import { Cpu, Wifi } from 'lucide-react';
+import { Cpu, Wifi, ArrowRight, User } from 'lucide-react';
 import GlassCard from './components/GlassCard';
 import './App.css';
 
@@ -87,24 +87,35 @@ function LoginScreen({ onLogin }) {
         <div className="aurora-blob blob-cyan"></div>
         <div className="aurora-blob blob-pink"></div>
         <div className="aurora-blob blob-yellow"></div>
+        <div className="aurora-blob blob-purple"></div>
       </div>
       
       <GlassCard className="login-card">
+        <div className="login-logo-box">
+          <div className="login-logo-icon">
+            <User size={28} />
+          </div>
+        </div>
+
         <h2 className="login-title">Glassmorphism Dashboard</h2>
         <p className="login-subtitle">이름을 입력하고 대시보드를 시작해 보세요.</p>
         <form onSubmit={handleSubmit} className="login-form">
-          <input 
-            type="text" 
-            placeholder="이름을 입력해 주세요" 
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="login-input"
-            maxLength={10}
-            required
-            autoFocus
-          />
+          <div className="login-input-wrapper">
+            <User size={18} className="login-input-icon" />
+            <input 
+              type="text" 
+              placeholder="사용자 이름을 입력해 주세요" 
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="login-input"
+              maxLength={10}
+              required
+              autoFocus
+            />
+          </div>
           <button type="submit" className="login-submit-btn">
-            시작하기
+            <span>시작하기</span>
+            <ArrowRight size={16} className="btn-arrow-icon" />
           </button>
         </form>
       </GlassCard>
@@ -119,6 +130,97 @@ function App() {
   const [userName, setUserName] = useState(() => {
     return localStorage.getItem('dashboard_user_name') || '홍길동님';
   });
+
+  const [auroraColors, setAuroraColors] = useState(() => {
+    const saved = localStorage.getItem('dashboard_aurora_colors');
+    return saved ? JSON.parse(saved) : ['rgb(50, 179, 237)', 'rgb(248, 60, 160)', 'rgb(255, 235, 11)'];
+  });
+  const [moodLoading, setMoodLoading] = useState(false);
+
+  useEffect(() => {
+    document.documentElement.style.setProperty('--color-cyan', auroraColors[0]);
+    document.documentElement.style.setProperty('--color-pink', auroraColors[1]);
+    document.documentElement.style.setProperty('--color-yellow', auroraColors[2]);
+    localStorage.setItem('dashboard_aurora_colors', JSON.stringify(auroraColors));
+  }, [auroraColors]);
+
+  const fetchMoodColors = async (moodLabel) => {
+    const geminiKey = 
+      import.meta.env.VITE_GEMINI_API_KEY || 
+      localStorage.getItem('gemini_api_key') || 
+      '';
+    
+    if (!geminiKey) {
+      console.warn('⚠️ [Gemini API] API Key가 등록되지 않았습니다. 기본 그라디언트 조합을 생성합니다.');
+      const fallbackColorSets = {
+        '평온': [['#059669', '#10b981', '#6ee7b7'], ['#0d9488', '#14b8a6', '#99f6e4'], ['#1e40af', '#3b82f6', '#93c5fd']],
+        '기쁨': [['#fbbf24', '#f59e0b', '#fef08a'], ['#ec4899', '#f43f5e', '#fbcfe8'], ['#f97316', '#ff8225', '#ffedd5']],
+        '몰입': [['#ef4444', '#dc2626', '#fca5a5'], ['#7c3aed', '#8b5cf6', '#ddd6fe'], ['#f43f5e', '#d946ef', '#fbcfe8']]
+      };
+      
+      const sets = fallbackColorSets[moodLabel] || [['#32b3ed', '#f83ca0', '#ffeb0b']];
+      const selectedSet = sets[Math.floor(Math.random() * sets.length)];
+      setAuroraColors(selectedSet);
+      return;
+    }
+
+    setMoodLoading(true);
+    const promptText = `사용자가 오늘의 기분으로 "${moodLabel}"(을)를 선택했습니다. 이 기분의 분위기와 완벽하게 어울리며 대시보드의 백그라운드 오로라 그라디언트 효과를 구성할 3가지 색상 코드를 생성해줘. 조화롭고 아름다운 유채색 헥사(Hex) 코드 3개여야 해.
+
+반드시 다음 JSON 형식으로만 응답해야 해: {"colors": ["#HEX1", "#HEX2", "#HEX3"]}`;
+
+    try {
+      const response = await fetch(
+        `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${geminiKey}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            contents: [{
+              parts: [{
+                text: promptText
+              }]
+            }],
+            generationConfig: {
+              responseMimeType: "application/json",
+              responseSchema: {
+                type: "OBJECT",
+                properties: {
+                  colors: {
+                    type: "ARRAY",
+                    items: { type: "STRING" }
+                  }
+                },
+                required: ["colors"]
+              }
+            }
+          })
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Gemini API HTTP 에러! 상태코드: ${response.status}`);
+      }
+
+      const resData = await response.json();
+      const generatedText = resData.candidates?.[0]?.content?.parts?.[0]?.text || '';
+      const parsedData = JSON.parse(generatedText.trim());
+
+      if (parsedData.colors && parsedData.colors.length === 3) {
+        setAuroraColors(parsedData.colors);
+      } else {
+        throw new Error('colors 배열의 크기가 3이 아닙니다.');
+      }
+    } catch (error) {
+      console.error('❌ [Gemini API Mood Colors] Error:', error);
+      const randomHex = () => '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0');
+      setAuroraColors([randomHex(), randomHex(), randomHex()]);
+    } finally {
+      setMoodLoading(false);
+    }
+  };
 
   const handleLogin = (name) => {
     const formattedName = name.endsWith('님') ? name : `${name}님`;
@@ -158,8 +260,8 @@ function App() {
 
   // Gemini 2.5 API & Quote Shared States
   const [quote, setQuote] = useState({
-    text: '가장 위대한 영광은 한 번도 넘어지지 않는 것이 아니라 넘어질 때마다 다시 일어서는 것이다.',
-    author: '넬슨 만델라'
+    text: '가장 좋은 프롬프트는 당신이 무엇을 원하는지 명확히 아는 지성에서 출발한다.',
+    author: 'AIWORKSPACES'
   });
   const [quoteAnimate, setQuoteAnimate] = useState(false);
   const [geminiLoading, setGeminiLoading] = useState(false);
@@ -482,6 +584,26 @@ function App() {
       </div>
 
       <div className="app-container">
+        {/* 상단 콤팩트 Glass Top Bar (프로필, 위치, 날씨, 로그아웃 통합) */}
+        <div className="app-top-bar glass-effect">
+          <div className="top-bar-left">
+            <div className="top-bar-item profile-area">
+              <ProfileWidget userName={userName} onNameChange={handleNameChange} />
+            </div>
+            <div className="top-bar-item location-area">
+              <LocationWidget text={locationName} loading={loading} />
+            </div>
+            <div className="top-bar-item weather-area">
+              <WeatherWidget weather={weather} loading={loading} />
+            </div>
+          </div>
+          <div className="top-bar-right">
+            <div className="top-bar-item logout-area">
+              <LogoutWidget onLogout={handleLogout} />
+            </div>
+          </div>
+        </div>
+
         <header className="app-header">
           <div className="header-greeting">{getGreeting()}</div>
           <h1 className="header-title">Glassmorphism Dashboard</h1>
@@ -490,30 +612,14 @@ function App() {
           </p>
         </header>
 
-        {/* 메인 대시보드 레이아웃 (세로 정렬 구조 하단에 신규 위젯 추가) */}
+        {/* 메인 대시보드 레이아웃 (사용자 커스텀 정방향 정렬) */}
         <main className="dashboard-grid">
-          {/* 1. 기본 피그마 정의 위젯군 */}
-          <div className="widget-wrapper location-area">
-            <LocationWidget text={locationName} loading={loading} />
-          </div>
-
-          <div className="widget-wrapper weather-area">
-            <WeatherWidget weather={weather} loading={loading} />
-          </div>
-
+          {/* 1. 시간 */}
           <div className="widget-wrapper date-area">
             <DateWidget />
           </div>
-          
-          <div className="widget-wrapper profile-area">
-            <ProfileWidget userName={userName} onNameChange={handleNameChange} />
-          </div>
-          
-          <div className="widget-wrapper logout-area">
-            <LogoutWidget onLogout={handleLogout} />
-          </div>
 
-          {/* 2. 신규 중간 배치 위젯군 (오늘의 명언, Focus Timer) */}
+          {/* 2. 명언 */}
           <div className="widget-wrapper quote-area">
             <QuoteWidget 
               quote={quote} 
@@ -522,15 +628,17 @@ function App() {
             />
           </div>
 
+          {/* 3. 포커스 타이머 */}
           <div className="widget-wrapper focus-timer-area">
             <FocusTimerWidget />
           </div>
 
-          {/* 3. 신규 추가 4종 위젯군 */}
+          {/* 4. 디데이 플래너 */}
           <div className="widget-wrapper dday-area">
             <DDayWidget />
           </div>
 
+          {/* 5. 투데이 포커스 */}
           <div className="widget-wrapper today-focus-area">
             <TodayFocusWidget 
               onFocusSubmit={fetchGeminiQuote} 
@@ -538,20 +646,22 @@ function App() {
             />
           </div>
 
+          {/* 6. 오늘의 기분 입력 */}
           <div className="widget-wrapper mood-area">
-            <MoodWidget />
+            <MoodWidget onMoodSelect={fetchMoodColors} moodLoading={moodLoading} />
           </div>
 
+          {/* 7. 할일 목록 */}
           <div className="widget-wrapper today-todo-area">
             <TodayTodoWidget />
           </div>
 
-          {/* 4. 아이디어 대시패드 위젯 */}
+          {/* 8. 아이디어 메모장 */}
           <div className="widget-wrapper ideapad-area">
             <IdeaPadWidget />
           </div>
 
-          {/* 3. 데스크탑/태블릿용 보너스 리소스 모니터 위젯 */}
+          {/* 9. 시스템 모니터 (데스크탑 보너스) */}
           <div className="widget-wrapper desktop-widget monitor-area">
             <DesktopSystemMonitor />
           </div>

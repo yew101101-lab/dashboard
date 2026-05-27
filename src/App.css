@@ -1,13 +1,14 @@
 /* App Container Layout */
 .app-container {
   width: 100%;
-  max-width: 1100px; /* 위젯 수 증가에 맞춰 대시보드 너비를 적절히 확장 */
+  max-width: 1000px; /* 2열 구조에 최적화하여 콤팩트한 1000px 너비로 조정 */
   margin: 0 auto;
   padding: 40px 24px 60px;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
   min-height: 100svh;
+  position: relative; /* 우상단 로그아웃 및 톱바 오버레이를 위한 기준점 제공 */
 }
 
 /* Header Section */
@@ -52,36 +53,219 @@
   font-weight: 500;
 }
 
+/* --- Top Bar (SaaS Header Info Bar) --- */
+.app-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 0; /* 단일 바 형태를 없애기 위해 패딩 제거 */
+  margin-bottom: 32px;
+  background: transparent !important; /* 배경 제거 */
+  border: none !important; /* 테두리 제거 */
+  box-shadow: none !important;
+  animation: slideDown 0.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.top-bar-left {
+  display: flex;
+  align-items: center;
+  gap: 12px; /* 각각의 미니 버튼 칩 사이 간격 */
+}
+
+.top-bar-right {
+  display: flex;
+  align-items: center;
+}
+
+.top-bar-item {
+  display: flex;
+  align-items: center;
+}
+
+/* --- Top Bar Widget Overrides to Make them Compact & Independent --- */
+.app-top-bar .widget-card {
+  padding: 8px 16px !important; /* 콤팩트한 패딩 부여 */
+  min-height: auto !important;
+  width: auto !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.05) !important; /* 각 버튼마다 독립적인 반투명 배경 */
+  border: 1px solid rgba(255, 255, 255, 0.12) !important; /* 각 버튼마다 독립적인 테두리 */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) !important;
+}
+
+.app-top-bar .widget-card:hover {
+  background: rgba(255, 255, 255, 0.08) !important;
+  border-color: rgba(255, 255, 255, 0.25) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  transform: translateY(-2px) !important;
+}
+
+.app-top-bar .widget-header {
+  width: auto !important;
+  gap: 8px !important;
+}
+
+.app-top-bar .widget-icon-box {
+  width: 28px !important;
+  height: 28px !important;
+  border-radius: 8px !important;
+  background: rgba(255, 255, 255, 0.06) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+.app-top-bar .widget-card:hover .widget-icon-box {
+  background: var(--icon-color, #ffffff) !important;
+  color: #0b0816 !important;
+  box-shadow: 0 0 10px var(--icon-color, #ffffff) !important;
+  transform: scale(1.05) rotate(3deg) !important;
+}
+
+.app-top-bar .widget-title {
+  font-size: 13.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: -0.2px !important;
+}
+
+.app-top-bar .widget-subtext,
+.app-top-bar .widget-hint,
+.app-top-bar .widget-hint-action,
+.app-top-bar .widget-badge {
+  display: none !important; /* 상단 바 칩에서는 서브 설명 텍스트 전부 숨김 */
+}
+
+/* 프로필 위젯 커스텀 */
+.app-top-bar .profile-widget {
+  position: relative !important;
+}
+
+/* 날씨 위젯 커스텀 */
+.app-top-bar .weather-widget {
+  pointer-events: none; /* 날씨는 읽기 전용으로 유도 */
+}
+
+/* 로그아웃 위젯 커스텀 */
+.app-top-bar .logout-widget:hover {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border-color: rgba(239, 68, 68, 0.3) !important;
+}
+
+.app-top-bar .logout-widget:hover .widget-icon-box {
+  background: #ef4444 !important;
+  color: #ffffff !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.5) !important;
+}
+
+/* 탑바 내 미니 로그아웃 컨펌 창 */
+.app-top-bar .logout-widget .logout-confirm-box {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+  padding: 0 !important;
+  animation: fadeIn 0.2s ease;
+}
+
+.app-top-bar .logout-widget .logout-confirm-title {
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: #fca5a5 !important;
+  white-space: nowrap !important;
+}
+
+.app-top-bar .logout-widget .logout-confirm-buttons {
+  width: auto !important;
+  gap: 4px !important;
+}
+
+.app-top-bar .logout-widget .btn-confirm-yes,
+.app-top-bar .logout-widget .btn-confirm-no {
+  padding: 3px 8px !important;
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  border-radius: 6px !important;
+}
+
 /* --- Responsive Dashboard Grid System --- */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr); /* 데스크탑 2열 그리드 시스템 */
+  grid-auto-flow: row; /* dense 비활성화하여 정방향 렌더링 유지 */
   gap: 24px;
   width: 100%;
-  animation: fadeInGrid 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+  animation: fadeInGrid 0.8s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
 @keyframes fadeInGrid {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(15px); }
   to { opacity: 1; transform: translateY(0); }
 }
 
 .widget-wrapper {
   display: flex;
   width: 100%;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.widget-wrapper:hover {
+  transform: translateY(-4px); /* 호버 시 위젯 전체 부드럽게 상승 */
 }
 
 /* --- Grid Spans for Balance --- */
+.profile-area {
+  grid-column: span 1;
+}
+
 .date-area {
   grid-column: span 2; /* 날짜 정보 카드는 넓은 가로폭 제공 */
 }
 
+.location-area {
+  grid-column: span 1;
+}
+
+.weather-area {
+  grid-column: span 1;
+}
+
+.today-focus-area {
+  grid-column: span 2;
+}
+
 .today-todo-area {
+  grid-column: span 1;
   grid-row: span 2; /* 오늘 할 일 목록은 세로로 길게 배치 */
 }
 
+.focus-timer-area {
+  grid-column: span 1;
+}
+
+.quote-area {
+  grid-column: span 2; /* 명언을 가로로 2칸 넓혀 긴 명언도 가독성 좋게 배치 */
+}
+
+.ideapad-area {
+  grid-column: span 1;
+}
+
+.dday-area {
+  grid-column: span 1;
+}
+
+.mood-area {
+  grid-column: span 1;
+}
+
 .monitor-area {
-  grid-column: span 2; /* 데스크탑/태블릿에서 빈자리를 메우기 위해 2칸 제공 */
+  grid-column: span 2; /* 2열 구조의 하단 전체를 꽉 채워 배치 */
 }
 
 
@@ -215,6 +399,7 @@
 /* 1. Tablet View (601px ~ 1024px) */
 @media (max-width: 1024px) {
   .app-container {
+    max-width: 900px;
     padding: 32px 20px;
   }
   
@@ -224,16 +409,61 @@
   
   .dashboard-grid {
     grid-template-columns: repeat(2, 1fr);
+    grid-auto-flow: dense; /* 2열 구조에서는 유연하게 공간을 메우도록 dense 활성화 */
     gap: 20px;
+  }
+
+  .profile-area {
+    grid-column: span 1;
   }
 
   .date-area {
     grid-column: span 2; /* 태블릿 2열 구조에서도 2칸을 꽉 채우도록 함 */
   }
 
+  .location-area {
+    grid-column: span 1;
+  }
+
+  .weather-area {
+    grid-column: span 1;
+  }
+
+  .logout-area {
+    grid-column: span 1;
+  }
+
+  .today-focus-area {
+    grid-column: span 2;
+  }
+
   .today-todo-area {
     grid-column: span 1;
     grid-row: span 1; /* 높이 밸런스 조정 */
+  }
+
+  .focus-timer-area {
+    grid-column: span 1;
+  }
+
+  .quote-area {
+    grid-column: span 2;
+  }
+
+  .ideapad-area {
+    grid-column: span 1;
+  }
+
+  .dday-area {
+    grid-column: span 1;
+  }
+
+  .mood-area {
+    grid-column: span 1;
+  }
+
+  .monitor-area {
+    grid-column: span 2;
   }
 }
 
@@ -269,5 +499,131 @@
     width: 100% !important;
     align-self: center !important;
     margin: 0 !important;
+  }
+
+  /* 모바일 탑바 미니 칩 정렬 유지 */
+  .app-top-bar {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin-bottom: 24px !important;
+  }
+
+  .top-bar-left {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    width: 100% !important;
+    gap: 8px !important;
+  }
+
+  .top-bar-right {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+    margin-top: 8px !important;
+  }
+
+  .top-bar-divider {
+    display: none !important;
+  }
+
+  .top-bar-item {
+    width: auto !important;
+  }
+
+  /* 모바일에서도 작은 버튼 스타일 고수 */
+  .app-top-bar .widget-card {
+    padding: 8px 14px !important;
+    min-height: auto !important;
+    width: auto !important;
+    border-radius: 12px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 6px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    transform: none !important;
+  }
+
+  .app-top-bar .widget-card:hover {
+    transform: none !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+  }
+
+  .app-top-bar .widget-header {
+    width: auto !important;
+    gap: 6px !important;
+  }
+
+  .app-top-bar .widget-icon-box {
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 6px !important;
+  }
+
+  .app-top-bar .widget-icon-box svg {
+    width: 12px !important;
+    height: 12px !important;
+  }
+
+  .app-top-bar .widget-title {
+    font-size: 12.5px !important;
+  }
+
+  .app-top-bar .widget-subtext,
+  .app-top-bar .widget-hint,
+  .app-top-bar .widget-hint-action,
+  .app-top-bar .widget-badge {
+    display: none !important; /* 모바일 미니 버튼에서도 텍스트 숨김 유지 */
+  }
+
+  /* 모바일 최하단 로그아웃 미니 버튼 강제 */
+  .app-top-bar .logout-area {
+    order: 999 !important; /* 모바일 세로 목록 최하단 배치 강제 */
+    width: auto !important;
+    margin-top: 12px !important;
+  }
+
+  .app-top-bar .logout-widget.confirm-mode {
+    background: rgba(239, 68, 68, 0.1) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+  }
+
+  .app-top-bar .logout-widget .logout-confirm-box {
+    flex-direction: row !important;
+    gap: 8px !important;
+    padding: 0 !important;
+  }
+
+  .app-top-bar .logout-widget .logout-confirm-title {
+    font-size: 10px !important;
+    white-space: nowrap !important;
+  }
+
+  .app-top-bar .logout-widget .logout-confirm-buttons {
+    width: auto !important;
+    gap: 4px !important;
+  }
+
+  .app-top-bar .logout-widget .btn-confirm-yes,
+  .app-top-bar .logout-widget .btn-confirm-no {
+    padding: 2px 6px !important;
+    font-size: 9px !important;
+    border-radius: 5px !important;
+  }
+
+  .app-footer {
+    order: 1000 !important; /* 모바일 세로 레이아웃 최하단 강제 (로그아웃 위젯 밑) */
   }
 }
