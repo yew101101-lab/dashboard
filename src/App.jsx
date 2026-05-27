@@ -600,10 +600,6 @@ function App() {
 
         <header className="app-header">
           <div className="header-greeting">좋은 아침입니다 ☀️</div>
-          <h1 className="header-title">라이프 대시보드</h1>
-          <p className="header-subtitle">
-            각각의 위젯 카드가 직관적인 세로 정렬 구조로 배치된 반응형 대시보드
-          </p>
         </header>
 
         {/* 메인 대시보드 레이아웃 (사용자 커스텀 정방향 정렬) */}
